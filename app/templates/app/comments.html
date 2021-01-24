@@ -1,0 +1,6 @@
+{% for comment in comments %}
+    <div style="border: 1px dashed black; width: fit-content">
+        <span> {{ comment.votes }} - </span>
+        <span>{{ comment.comment_text }}</span>
+    </div>
+{% endfor %}

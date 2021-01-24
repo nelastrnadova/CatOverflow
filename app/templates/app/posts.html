@@ -1,0 +1,31 @@
+{% for post in posts %}
+    <div style="border: 1px solid black; width: fit-content">
+        <div><span> {{ post.votes }} - </span><strog>{{ post.name }}</strog></div>
+        <div>{{ post.post_text }}</div>
+    </div>
+    <div id="post_comments_{{post.pk}}">
+        {% show_comments post false %}
+    </div>
+    <input type="text" id="comment_{{post.pk}}" placeholder="comment..">
+    <button onclick="sendComment({{post.pk}})">Comment</button>
+{% endfor %}
+{% csrf_token %}
+<script>
+    function sendComment(postId) {
+        var comment = document.getElementById("comment_" + postId).value
+        document.getElementById("comment_" + postId).value = ''
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", "/post_comment/", true);
+        xhttp.setRequestHeader("Content-Type", "application/json");
+        xhttp.setRequestHeader("X-CSRFToken", document.getElementsByName('csrfmiddlewaretoken')[0].value);
+        xhttp.onreadystatechange = function() {
+           if (this.readyState == 4 && this.status == 200) {
+             var response = this.responseText;
+             document.getElementById("post_comments_" + postId).innerHTML += response
+           }
+        };
+        var data = {comment: comment, post_id: postId};
+        xhttp.send(JSON.stringify(data));
+    }
+</script>
